@@ -50,18 +50,16 @@ const Canvas = ({ game, cellSize, onRobotClick }: CanvasProps) => {
       onWheel={handleWheel}
       draggable>
       <Layer>
-        {game.grid.map((row, y) =>
-          row.map((cell, x) => (
-            <Rect
-              key={`${x},${y}`}
-              x={x * cellSize}
-              y={y * cellSize}
-              width={cellSize}
-              height={cellSize}
-              fill={getColor(cell.resource)}
-              stroke="black" />
-          ))
-        )}
+        {game.board.map((tile, x, y) => (
+          <Rect
+            key={`${x},${y}`}
+            x={x * cellSize}
+            y={y * cellSize}
+            width={cellSize}
+            height={cellSize}
+            fill={getColor(tile.resource)}
+            stroke="black" />
+        ))}
         {game.robots.map((robot, i) => (
           <Rect
             key={i}

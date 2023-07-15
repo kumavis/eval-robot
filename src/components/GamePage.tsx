@@ -15,9 +15,7 @@ const GamePage = () => {
     game.addRobot(robot);
     robot.thinkCode = 
 `function(surroundings) {
-  const width = surroundings.length;
-  const height = surroundings[0].length;
-  const currentTile = surroundings[(width-1) / 2][(height-1) / 2]
+  const currentTile = surroundings.getCenterTile();
   // mine current location
   if (currentTile.resource > 0) {
     return { type: 'mine' };
