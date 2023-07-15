@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Canvas from './CanvasGrid';
 import Editor from './Editor';
-import { Game, Robot, Tile } from '../model/Game'; // Import your game model
+import { Game, Robot, Tile } from '../model/Game';
 import useInterval from '../hooks/useInterval';
 
 const GamePage = () => {
@@ -10,7 +10,7 @@ const GamePage = () => {
   const [selectedRobot, setSelectedRobot] = useState<Robot | null>(null);
   
   useEffect(() => {
-    const game = new Game(20, 20)
+    const game = new Game(100, 100)
     const robot = new Robot(10, 10);
     game.addRobot(robot);
     robot.thinkCode = 
