@@ -22,7 +22,7 @@ export class Game {
       const surrounding = this.getSurroundingTiles(robot);
       const task = robot.think(surrounding);
       if (task.type === 'move') {
-        if (!task.dx || !task.dy) {
+        if (typeof task.dx !== 'number' || typeof task.dy !== 'number') {
           throw new Error('Robot must specify dx and dy to move');
         }
         const speedValid = Math.abs(task.dx) + Math.abs(task.dy) <= robot.speed;
