@@ -9,7 +9,6 @@ export class Game {
         return new Tile(Math.floor(Math.random() * 100));
       });
     });
-    console.log(this.grid);
     this.robots = [];
   }
 
@@ -22,7 +21,6 @@ export class Game {
       if (!robot.think) continue;
       const surrounding = this.getSurroundingTiles(robot);
       const task = robot.think(surrounding);
-      console.log(task);
       if (task.type === 'move') {
         const speedValid = Math.abs(task.dx) + Math.abs(task.dy) <= robot.speed;
         if (!speedValid) {
@@ -82,12 +80,26 @@ export class Robot {
   carrying: number;
   sensorStrength: number = 1;
   think?: (tiles: Tile[][]) => Task;
+  _thinkCode?: string;
 
   constructor(startX: number, startY: number) {
     this.x = startX;
     this.y = startY;
     this.speed = 1;
     this.carrying = 0;
+  }
+
+  set thinkCode(code: string) {
+    const formattedCode = `(function() { return ${code}; })()`;
+    // eslint-disable-next-line no-new-func
+    const newThink = eval(formattedCode) as any;
+    console.log(newThink);
+    this._thinkCode = code;
+    this.think = newThink;
+  }
+
+  get thinkCode() {
+    return this._thinkCode;
   }
 }
 
@@ -97,31 +109,3 @@ interface Task {
   dx?: number;
   dy?: number;
 }
-
-// // Usage
-// const game = new Game(20, 20);
-
-// const robot = new Robot(10, 10);
-// game.addRobot(robot);
-
-// robot.think = function(surroundings: Tile[][]) {
-//   // Use 'surroundings' to make a decision
-//   // For example, if there's a resource tile to the right, move right.
-//   if (surroundings[1][2].resource > 0) {
-//     return { type: 'move', dx: 1, dy: 0 };
-//   } else {
-//     return { type: 'mine' };
-//   }
-// }
-
-// console.log(game.robots[0].x, game.robots[0].y);
-// console.log(game.robots[0].carrying);
-// game.tick();
-// console.log(game.robots[0].x, game.robots[0].y);
-// console.log(game.robots[0].carrying);
-// game.tick();
-// console.log(game.robots[0].x, game.robots[0].y);
-// console.log(game.robots[0].carrying);
-// game.tick();
-// console.log(game.robots[0].x, game.robots[0].y);
-// console.log(game.robots[0].carrying);
