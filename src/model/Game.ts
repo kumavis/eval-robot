@@ -22,6 +22,9 @@ export class Game {
       const surrounding = this.getSurroundingTiles(robot);
       const task = robot.think(surrounding);
       if (task.type === 'move') {
+        if (!task.dx || !task.dy) {
+          throw new Error('Robot must specify dx and dy to move');
+        }
         const speedValid = Math.abs(task.dx) + Math.abs(task.dy) <= robot.speed;
         if (!speedValid) {
           throw new Error('Robot cannot move that fast');
@@ -80,7 +83,7 @@ export class Robot {
   carrying: number;
   sensorStrength: number = 1;
   think?: (tiles: Tile[][]) => Task;
-  _thinkCode?: string;
+  _thinkCode: string = '';
 
   constructor(startX: number, startY: number) {
     this.x = startX;

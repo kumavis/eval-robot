@@ -1,5 +1,6 @@
 import { Stage, Layer, Rect } from 'react-konva';
 import { useEffect, useState, useRef } from 'react';
+import { Game, Robot } from '../model/Game';
 
 interface CanvasProps {
   game: Game;
@@ -11,7 +12,7 @@ const Canvas = ({ game, cellSize, onRobotClick }: CanvasProps) => {
   const stageRef = useRef(null);
   const [scale, setScale] = useState(1);
 
-  const handleWheel = (e) => {
+  const handleWheel = (e: any) => {
     e.evt.preventDefault();
     const scaleBy = 1.1;
     const stage = e.target.getStage();

@@ -6,12 +6,9 @@ import { Game, Robot, Tile } from '../model/Game'; // Import your game model
 import useInterval from '../hooks/useInterval';
 
 const GamePage = () => {
-  const [gameState, setGame] = useState<{game:Game}>(null);
+  const [gameState, setGame] = useState<{game:Game} | null>(null);
   const [selectedRobot, setSelectedRobot] = useState<Robot | null>(null);
-  const [scale, setScale] = useState(1);
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
-
+  
   useEffect(() => {
     const game = new Game(20, 20)
     const robot = new Robot(10, 10);
@@ -57,11 +54,7 @@ const GamePage = () => {
       <Canvas
         game={game}
         cellSize={50}
-        scale={scale}
-        offsetX={offsetX}
-        offsetY={offsetY}
         onRobotClick={robot => setSelectedRobot(robot)}/>
-      {/* Here you could add controls for the scale and offset */}
     </div>
   );
 };
