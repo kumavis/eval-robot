@@ -14,8 +14,12 @@ const GamePage = () => {
     const robot = new Robot(10, 10);
     game.addRobot(robot);
     robot.thinkCode = 
-`function(surroundings) {
+`function(surroundings, robot) {
   const currentTile = surroundings.getCenterTile();
+  // multiply
+  if (robot.carrying > 100) {
+    return { type: 'multiply' };
+  }
   // mine current location
   if (currentTile.resource > 0) {
     return { type: 'mine' };

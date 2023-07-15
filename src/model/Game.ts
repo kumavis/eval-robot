@@ -84,10 +84,24 @@ export class Game {
 
   tick() {
     for (const robot of this.robots) {
-      if (!robot.think) continue;
-      const surroundingBoard = this.board.getSurroundingSegment(robot.x, robot.y, robot.sensorStrength);
-      const task = robot.think(surroundingBoard);
-      if (task.type === 'move') {
+      try {
+        this.handleThink(robot);
+      } catch (e) {
+        console.error(e);
+        // robot.think = undefined;
+      }
+    }
+  }
+
+  handleThink(robot: Robot) {
+    if (!robot.think) return;
+    const surroundingBoard = this.board.getSurroundingSegment(robot.x, robot.y, robot.sensorStrength);
+    const robotStats = {
+      carrying: robot.carrying,
+    };
+    const task = robot.think(surroundingBoard, robotStats);
+    switch (task.type) {
+      case 'move': {
         if (typeof task.dx !== 'number' || typeof task.dy !== 'number') {
           throw new Error('Robot must specify dx and dy to move');
         }
@@ -103,15 +117,28 @@ export class Game {
         // move the robot
         robot.x += task.dx;
         robot.y += task.dy;
-      } else if (task.type === 'mine') {
+        break;
+      }
+      case 'mine': {
         // Mine the resources
         const tile = this.board.tiles[robot.y][robot.x];
         // Mining rate
         const amount = Math.min(tile.resource, 10);
         tile.resource -= amount;
         robot.carrying += amount;
+        break;
       }
-    };
+      case 'multiply': {
+        // Mine the resources
+        if (robot.carrying >= 100) {
+          robot.carrying -= 100;
+          const newRobot = new Robot(robot.x, robot.y);
+          newRobot.thinkCode = robot.thinkCode;
+          this.robots.push(newRobot);
+        }
+        break;
+      }
+    }
   }
 
   getSurroundingTiles(robot: Robot) {
@@ -140,7 +167,7 @@ export class Robot {
   speed: number;
   carrying: number;
   sensorStrength: number = 1;
-  think?: (tiles: Board) => Task;
+  think?: (tiles: Board, { carrying }: { carrying: number }) => Task;
   _thinkCode: string = '';
 
   constructor(startX: number, startY: number) {
@@ -154,7 +181,6 @@ export class Robot {
     const formattedCode = `(function() { return ${code}; })()`;
     // eslint-disable-next-line no-new-func
     const newThink = eval(formattedCode) as any;
-    console.log(newThink);
     this._thinkCode = code;
     this.think = newThink;
   }
@@ -166,7 +192,7 @@ export class Robot {
 
 // Define the Task interface
 interface Task {
-  type: 'move' | 'mine';
+  type: 'move' | 'mine' | 'multiply';
   dx?: number;
   dy?: number;
 }
